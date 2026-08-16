@@ -1,0 +1,6 @@
+customers:
+  - id: C1
+    name: ลูกค้า
+products:
+  - id: P1
+    name: Product

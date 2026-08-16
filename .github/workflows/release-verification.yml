@@ -1,0 +1,145 @@
+name: Release Verification
+
+on:
+  push:
+    branches:
+      - 'release/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release-quality:
+    name: Release quality, audit, and licenses
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up pnpm and Node.js
+        uses: pnpm/setup@v2
+        with:
+          version: 11.17.0
+          runtime: node@24
+          install: false
+
+      - name: Install dependencies from lockfile
+        run: pnpm install --frozen-lockfile
+
+      - name: Tracked-content safety scan
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git grep -InE -- '-----BEGIN (RSA |OPENSSH |EC |DSA )?PRIVATE KEY-----|github_pat_[A-Za-z0-9_]{20,}|gh[pousr]_[A-Za-z0-9_]{20,}|AKIA[0-9A-Z]{16}|sk-[A-Za-z0-9]{20,}' -- .; then
+            echo 'Potential secret signature found in tracked content.' >&2
+            exit 1
+          fi
+          if git ls-files | grep -E '(^|/)(node_modules|dist|coverage|test-results|playwright-report)(/|$)'; then
+            echo 'Generated or temporary output is tracked.' >&2
+            exit 1
+          fi
+          echo 'No configured secret signatures or tracked generated-output paths found.'
+
+      - name: Production dependency audit
+        run: pnpm audit --prod --audit-level high
+
+      - name: Production dependency licenses
+        run: pnpm licenses list --prod
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Unit and integration tests
+        run: pnpm test:unit
+
+      - name: Production build
+        run: pnpm build
+
+  stable-browser:
+    name: Windows stable ${{ matrix.channel }}
+    runs-on: windows-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        channel:
+          - chrome
+          - msedge
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up pnpm and Node.js
+        uses: pnpm/setup@v2
+        with:
+          version: 11.17.0
+          runtime: node@24
+          install: false
+
+      - name: Install dependencies from lockfile
+        run: pnpm install --frozen-lockfile
+
+      - name: Record Windows environment
+        shell: pwsh
+        run: |
+          Write-Host "OS=$([System.Environment]::OSVersion.VersionString)"
+          Write-Host "CPU=$((Get-CimInstance Win32_Processor | Select-Object -First 1 -ExpandProperty Name).Trim())"
+          $ramBytes = (Get-CimInstance Win32_ComputerSystem).TotalPhysicalMemory
+          Write-Host "RAM_BYTES=$ramBytes"
+          Write-Host "NODE=$(node --version)"
+          Write-Host "PNPM=$(pnpm --version)"
+          Write-Host "COMMIT=${{ github.sha }}"
+          if ('${{ matrix.channel }}' -eq 'chrome') {
+            $browser = Join-Path $env:ProgramFiles 'Google\Chrome\Application\chrome.exe'
+          } else {
+            $browser = Join-Path ${env:ProgramFiles(x86)} 'Microsoft\Edge\Application\msedge.exe'
+          }
+          if (-not (Test-Path $browser)) {
+            throw "Stable browser executable not found: $browser"
+          }
+          Write-Host "BROWSER_EXECUTABLE=$browser"
+          Write-Host "BROWSER_VERSION=$((Get-Item $browser).VersionInfo.ProductVersion)"
+
+      - name: Production build
+        run: pnpm build
+
+      - name: Stable browser critical E2E
+        env:
+          DIFFLENS_BROWSER_CHANNEL: ${{ matrix.channel }}
+        run: pnpm exec playwright test --config=playwright.release.config.ts tests/e2e
+
+      - name: Cross-format local-first network verification
+        env:
+          DIFFLENS_BROWSER_CHANNEL: ${{ matrix.channel }}
+        run: pnpm exec playwright test --config=playwright.release.config.ts tests/release/security-network.spec.ts
+
+      - name: Stable browser UX and accessibility sanity
+        env:
+          DIFFLENS_BROWSER_CHANNEL: ${{ matrix.channel }}
+        run: pnpm exec playwright test --config=playwright.release.config.ts tests/release/accessibility-ux.spec.ts
+
+      - name: Capture release-candidate screenshots
+        if: matrix.channel == 'chrome'
+        env:
+          DIFFLENS_BROWSER_CHANNEL: ${{ matrix.channel }}
+        run: pnpm exec playwright test --config=playwright.release.config.ts tests/release/screenshots.spec.ts
+
+      - name: Upload release-candidate screenshots
+        if: matrix.channel == 'chrome'
+        uses: actions/upload-artifact@v7
+        with:
+          name: difflens-v0.1.0-release-screenshots
+          path: release-artifacts/screenshots/*.png
+          if-no-files-found: error
+
+      - name: Controlled browser benchmark
+        env:
+          DIFFLENS_BROWSER_CHANNEL: ${{ matrix.channel }}
+        run: pnpm exec playwright test --config=playwright.release.config.ts tests/release/benchmark.spec.ts

@@ -1,0 +1,39 @@
+name: Bug report
+description: Report a reproducible DiffLens defect using public-safe data only.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve DiffLens. Do not attach confidential, customer, or production data.
+  - type: textarea
+    id: summary
+    attributes:
+      label: What happened?
+      description: Describe the observed behavior and what you expected instead.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      description: Use synthetic or public-safe sample data only.
+      placeholder: |
+        1. Open DiffLens
+        2. ...
+    validations:
+      required: true
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and version
+      placeholder: Chrome 140 / Edge 140
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional context
+      description: Include safe logs or screenshots only if they contain no sensitive source data.

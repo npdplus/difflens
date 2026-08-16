@@ -1,0 +1,4 @@
+record: &record
+  id: A
+items:
+  - *record

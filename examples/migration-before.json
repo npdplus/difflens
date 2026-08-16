@@ -1,0 +1,6 @@
+[
+  {"RecordId":"R001","BusinessValue1":"Alpha","BusinessValue2":10,"Status":"Ready","MigrationBatchId":"BATCH-A","ModifiedOn":"2026-08-01T08:00:00Z"},
+  {"RecordId":"R002","BusinessValue1":"Beta","BusinessValue2":20,"Status":"Ready","MigrationBatchId":"BATCH-A","ModifiedOn":"2026-08-01T08:00:00Z"},
+  {"RecordId":"R003","BusinessValue1":"Gamma","BusinessValue2":30,"Status":"Hold","MigrationBatchId":"BATCH-A","ModifiedOn":"2026-08-01T08:00:00Z"},
+  {"RecordId":"R004","BusinessValue1":"Removed","BusinessValue2":40,"Status":"Ready","MigrationBatchId":"BATCH-A","ModifiedOn":"2026-08-01T08:00:00Z"}
+]

@@ -1,0 +1,15 @@
+- ConfigKey: api-timeout
+  Enabled: true
+  Value: 30
+  Labels:
+    environment: demo
+- ConfigKey: retry-count
+  Enabled: true
+  Value: 3
+  Labels:
+    environment: demo
+- ConfigKey: legacy-mode
+  Enabled: false
+  Value: off
+  Labels:
+    environment: demo

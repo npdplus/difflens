@@ -1,0 +1,5 @@
+[
+  {"id":"A","name":"Alpha","status":"inactive"},
+  {"id":"B","name":"สมชาย","status":"active"},
+  {"id":"C","name":"Charlie","status":"active"}
+]

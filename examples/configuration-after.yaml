@@ -1,0 +1,15 @@
+- ConfigKey: api-timeout
+  Enabled: true
+  Value: 45
+  Labels:
+    environment: demo
+- ConfigKey: retry-count
+  Enabled: true
+  Value: 3
+  Labels:
+    environment: demo
+- ConfigKey: feature-flag
+  Enabled: true
+  Value: on
+  Labels:
+    environment: demo

@@ -1,0 +1,22 @@
+{
+  "name": "@difflens/file-adapters",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@difflens/comparison-core": "workspace:*",
+    "papaparse": "5.5.4",
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz",
+    "yaml": "2.9.0"
+  },
+  "devDependencies": {
+    "@types/papaparse": "5.5.2"
+  }
+}
