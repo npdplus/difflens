@@ -12,6 +12,26 @@ Try DiffLens in your browser:
 
 No installation or account is required for the V0.1 comparison workflow. Your selected source files are processed locally in the browser and are not uploaded to a comparison backend.
 
+## Product tour
+
+### 1. Load Before and After files
+
+![DiffLens file intake](docs/assets/difflens-file-intake.png)
+
+### 2. Choose the matching key and optional ignored fields
+
+![DiffLens matching key and ignored fields](docs/assets/difflens-key-ignore-fields.png)
+
+### 3. Review the comparison summary
+
+![DiffLens comparison summary](docs/assets/difflens-comparison-summary.png)
+
+### 4. Inspect field-level differences
+
+![DiffLens field-level differences](docs/assets/difflens-field-level-diff.png)
+
+The screenshots above were captured from the verified V0.1 release candidate using synthetic public-safe data.
+
 ## What V0.1 does
 
 - Load a Before and After file with picker or drag/drop.
