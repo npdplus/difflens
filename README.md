@@ -4,6 +4,14 @@ DiffLens is a local-first browser tool for comparing two structured datasets and
 
 V0.1 supports CSV, XLSX, JSON, and YAML files. Files are parsed and compared in the browser; the core comparison workflow does not require an account or backend upload.
 
+## Live demo
+
+Try DiffLens in your browser:
+
+**https://npd-plus-difflens.web.app**
+
+No installation or account is required for the V0.1 comparison workflow. Your selected source files are processed locally in the browser and are not uploaded to a comparison backend.
+
 ## What V0.1 does
 
 - Load a Before and After file with picker or drag/drop.
@@ -56,13 +64,26 @@ pnpm exec playwright install chromium
 pnpm test:e2e
 ```
 
-## Examples
+## Examples and test data
 
-Synthetic example pairs live in [`examples/`](examples/). They contain no customer data and are safe to use for product exploration and tests.
+Synthetic public-safe example pairs live in [`examples/`](examples/). They contain no customer data, credentials, tokens, or production identifiers and are safe to use for product exploration and testing.
+
+Included examples cover:
+
+- CSV customer changes — `customers-before.csv` / `customers-after.csv`
+- XLSX product catalog changes — `product-catalog-before.xlsx` / `product-catalog-after.xlsx`
+- JSON migration verification — `migration-before.json` / `migration-after.json`
+- YAML configuration drift — `configuration-before.yaml` / `configuration-after.yaml`
+
+[`examples/README.md`](examples/README.md) documents the matching key, expected Added / Removed / Changed / Unchanged counts, known field changes, and useful ignored-field scenarios for each pair.
+
+The repository also includes automated unit, adapter, security, E2E, release, accessibility, network, and benchmark tests under [`tests/`](tests/).
 
 ## Tested range
 
 Release verification on hosted Windows Server 2025 runners successfully exercised stable Chrome and Edge with approximately **100,000 CSV records / 6 fields**, **10,000 CSV records / 20 fields**, and **10,000-record JSON, YAML, and XLSX** cases. Every benchmark case also verified its expected Added, Removed, Changed, and Unchanged counts.
+
+The V0.1 release candidate was additionally exercised manually in stable Chrome and Edge on Windows using public-safe CSV, XLSX, JSON, and YAML before/after pairs, including matching-key selection, ignored fields, field-level differences, filtering, search, export, theme switching, keyboard navigation, and refresh behavior.
 
 See [V0.1 benchmark results](docs/release/V0.1_BENCHMARK_RESULTS.md) for browser versions, environment details, source sizes, and measured timings. This is evidence-based guidance rather than a theoretical maximum; larger files may work but remain browser- and format-dependent.
 
